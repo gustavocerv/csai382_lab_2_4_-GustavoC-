@@ -1,0 +1,10 @@
+# Default configuration values for notebooks and scripts
+# Populate these keys as needed for your environment
+paths:
+  data_dir: data
+  logs_dir: logs
+  output_dir: notebooks
+
+runtime:
+  log_level: INFO
+  timezone: UTC
