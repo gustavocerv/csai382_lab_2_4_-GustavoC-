@@ -1,6 +1,6 @@
 # CSE AI 382 Lab 2.4 – ETL Reproducibility Notebook
 
-This repository contains a small ETL project for **CSE AI 382**, focused on reproducible data processing, logging, and metrics computation using **Pandas in Databricks**. The purpose of this repo is to provide a **clean, reproducible workflow** for transforming and analyzing small restaurant datasets.
+This repository contains a small ETL project for CSE AI 382, focused on reproducible data processing, logging, and metrics computation using Pandas in Databricks. The purpose of this repo is to provide a clean, reproducible workflow for transforming and analyzing small restaurant datasets.
 
 ---
 
@@ -14,21 +14,22 @@ This repository contains a small ETL project for **CSE AI 382**, focused on repr
 └── README.md         # Project overview and instructions
 ```
 
-**Folder Purpose:**
+Folder Purpose:
 
-* **notebooks/** → Contains the ETL notebook `lab_2_4_repro_logging` which:
+* notebooks/ → Contains the ETL notebook `lab_2_4_repro_logging` which:
 
   * Loads and cleans datasets
   * Performs joins and data transformations
   * Computes metrics like top items, revenue by category, and busiest hour
   * Logs runtime info and saves output metrics
-* **sql/** → For SQL queries or transformations (not used in this lab but included for future use)
-* **etl_pipeline/** → Python scripts for automation or reproducible workflows
-* **data_samples/** → Contains small example CSV files:
+* sql/ → For SQL queries or transformations (not used in this lab but included for future use)
+* etl_pipeline/ → Python scripts for automation or reproducible workflows
+* data_samples/ → Contains small example CSV files:
 
   * `menu_items.csv`
   * `order_details.csv`
-* **README.md** → This file, describing the project, folder structure, and how to run the notebook
+
+* README.md → This file, describing the project, folder structure, and how to run the notebook
 
 ---
 
@@ -51,17 +52,17 @@ This project prepares you for larger datasets and more complex ETL pipelines in 
 
 ## How to Run (Databricks)
 
-1. **Clone the Repository in Databricks**
+1. Clone the Repository in Databricks
 
-   * Go to **Repos → Add Repo** and connect your GitHub account.
+   * Go to Repos → Add Repo and connect your GitHub account.
    * Clone this repository into your Databricks workspace.
 
-2. **Open the ETL Notebook**
+2. Open the ETL Notebook
 
    * Navigate to `notebooks/lab_2_4_repro_logging`.
    * Attach an interactive cluster.
 
-3. **Run All Cells**
+3. Run All Cells
 
    * The notebook will automatically:
 
@@ -177,6 +178,6 @@ display(orders.head())
 
 ## Outputs and Logs
 
-* **Logs:** `logs/run_<YYYYMMDD_HHMM>.log`
-* **Metrics output:** `/FileStore/tables/etl_output/metrics_<timestamp>.csv`
+* Logs: `logs/run_<YYYYMMDD_HHMM>.log`
+* Metrics output: `/FileStore/tables/etl_output/metrics_<timestamp>.csv`
 * Inline tables displayed in notebook for verification
