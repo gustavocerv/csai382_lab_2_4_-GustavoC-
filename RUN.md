@@ -1,13 +1,13 @@
 # How to Run (Databricks Notebook)
 
-This project is designed to run **inside Databricks using Databricks Repos** with a GitHub-connected repository.
+This project is designed to run inside Databricks using Databricks Repos with a GitHub-connected repository.
 
 ---
 
 ## 1) Open the Repository in Databricks
 
-1. Log in to **Databricks**.
-2. Go to **Repos → Add Repo** and connect your GitHub account.
+1. Log in to Databricks.
+2. Go to Repos → Add Repo and connect your GitHub account.
 3. Open the repository:
 
    ```
@@ -16,7 +16,8 @@ This project is designed to run **inside Databricks using Databricks Repos** wit
 4. Make sure the repository is on the correct branch:
 
    ```
-   feat/etl-notebook
+   feat/etl-notebook ( In my case the branch assignments-3/logs )
+   
    ```
 
 ---
@@ -49,8 +50,8 @@ No additional downloads are required.
    ```
    notebooks/lab_2_4_repro_logging
    ```
-2. Attach an **AWS Serverless Interactive Cluster** (or instructor-approved cluster).
-3. Run **all cells in order**.
+2. Attach an AWS Serverless Interactive Cluster (or instructor-approved cluster).
+3. Run all cells in order.
 
 The notebook will:
 
@@ -70,12 +71,12 @@ The notebook will:
 
 ## 4) Outputs and Logs
 
-* **Logs** are saved to:
+* Logs are saved to:
 
   ```
   logs/run_<YYYYMMDD_HHMM>.log
   ```
-* **ETL metrics output** is saved to:
+* ETL metrics output is saved to:
 
   ```
   /FileStore/tables/etl_output/metrics_<timestamp>.csv
