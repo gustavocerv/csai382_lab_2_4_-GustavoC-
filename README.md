@@ -185,6 +185,34 @@ display(orders.head())
 
 ---
 
+
+## Clean basic issues
+
+orders['order_date'] = pd.to_datetime(orders['order_date'], errors='coerce')
+orders['order_time'] = orders['order_time'].str.strip()
+if 'item_id' in orders.columns:
+    orders['item_id'] = orders['item_id'].astype('Int64')  # Use nullable integer type to avoid IntCastingNaNError
+menu['item_name'] = menu['item_name'].str.strip()
+menu['category'] = menu['category'].str.strip()
+
+# Join on menu_items.menu_item_id = order_details.item_id
+etl_df = orders.merge(menu, left_on='item_id', right_on='menu_item_id', how='left')
+
+# Create tidy table with useful columns
+etl_df = etl_df[['order_id', 'order_date', 'order_time', 'item_name', 'category', 'price']]
+display(etl_df.head())
+
+# Save cleaned and joined outputs
+import os
+output_dir = '/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/etl_output'
+os.makedirs(output_dir, exist_ok=True)
+menu.to_csv(f'{output_dir}/menu_items_loaded.csv', index=False)
+orders.to_csv(f'{output_dir}/order_details_loaded.csv', index=False)
+etl_df.to_csv(f'{output_dir}/etl_df_cleaned_joined.csv', index=False)
+print('Saved menu_items, order_details, and cleaned/joined etl_df to etl_output directory.')
+
+---
+
 ## Ethical Reflection
 
 Certain types of information should never be logged, such as personal customer details and passwords. For example, logging a customer's address or credit card number can expose sensitive data to unauthorized access, while logging passwords can lead to serious security breaches. Reproducibility supports accountability and fairness by allowing others to verify analyses and confirm that results are consistent. This is especially important when models or decisions affect people, as reproducible workflows help reduce errors and bias, building trust in data driven projects.
