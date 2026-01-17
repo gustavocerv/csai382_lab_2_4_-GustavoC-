@@ -48,7 +48,7 @@ No additional downloads are required.
 1. Open the notebook:
 
    ```
-   notebooks/lab_2_4_repro_logging
+   logs/lab_2_4_repro_logging
    ```
 2. Attach an AWS Serverless Interactive Cluster (or instructor-approved cluster).
 3. Run all cells in order.
@@ -79,7 +79,7 @@ The notebook will:
 * ETL metrics output is saved to:
 
   ```
-  /FileStore/tables/etl_output/metrics_<timestamp>.csv
+  /Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/etl_output
   ```
 * Inline tables are displayed in the notebook for verification.
 
@@ -87,7 +87,7 @@ The notebook will:
 
 ## 5) GitHub Workflow (Databricks Repos)
 
-All version control actions are performed **inside Databricks Repos**.
+All version control actions are performed inside Databricks Repos.
 
 1. Create a feature branch:
 

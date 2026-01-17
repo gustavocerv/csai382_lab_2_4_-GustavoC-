@@ -17,7 +17,6 @@ This repository contains a small ETL project for CSE AI 382, focused on reproduc
 Folder Purpose:
 
 * notebooks/ → Contains the ETL notebook `lab_2_4_repro_logging` which:
-
   * Loads and cleans datasets
   * Performs joins and data transformations
   * Computes metrics like top items, revenue by category, and busiest hour
@@ -25,10 +24,8 @@ Folder Purpose:
 * sql/ → For SQL queries or transformations (not used in this lab but included for future use)
 * etl_pipeline/ → Python scripts for automation or reproducible workflows
 * data_samples/ → Contains small example CSV files:
-
   * `menu_items.csv`
   * `order_details.csv`
-
 * README.md → This file, describing the project, folder structure, and how to run the notebook
 
 ---
@@ -36,12 +33,10 @@ Folder Purpose:
 ## Project Purpose
 
 The purpose of this repository is to:
-
 1. Demonstrate a reproducible ETL workflow in Databricks.
 2. Show proper logging for analysis tracking and debugging.
 3. Ensure reproducibility using random seed fixes and SHA-256 hashes of input files.
 4. Produce metrics for a small restaurant dataset:
-
    * Top 5 items by quantity
    * Revenue by category
    * Busiest hour of the day
@@ -52,27 +47,69 @@ This project prepares you for larger datasets and more complex ETL pipelines in 
 
 ## How to Run (Databricks)
 
-1. Clone the Repository in Databricks
+1. Log in to Databricks.
+2. Go to Repos → Add Repo and connect your GitHub account.
+3. Open the repository:
+   ```
+   csai382_lab_2_4_-GustavoC-
+   ```
+4. Make sure the repository is on the correct branch (e.g., `feat/etl-notebook`).
+5. Verify the input datasets are present in:
+   ```
+   data_samples/
+   ├── menu_items.csv
+   └── order_details.csv
+   ```
+   Python paths for the notebook:
+   ```
+   /Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/menu_items.csv
+   /Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/order_details.csv
+   ```
+6. Open the notebook:
+   ```
+   notebooks/lab_2_4_repro_logging
+   ```
+7. Attach an AWS Serverless Interactive Cluster (or instructor-approved cluster).
+8. Run all cells in order. The notebook will:
+   * Configure logging (console + file)
+   * Fix random seeds for reproducibility
+   * Compute SHA-256 hashes for input CSVs
+   * Load and clean the datasets
+   * Perform ETL transformations with Pandas
+   * Compute metrics:
+     * Top 5 items by quantity
+     * Revenue by category
+     * Busiest hour
+   * Save logs and ETL outputs
 
-   * Go to Repos → Add Repo and connect your GitHub account.
-   * Clone this repository into your Databricks workspace.
+---
 
-2. Open the ETL Notebook
+## Outputs and Logs
 
-   * Navigate to `notebooks/lab_2_4_repro_logging`.
-   * Attach an interactive cluster.
+* Logs are saved to:
+  ```
+  logs/run_<YYYYMMDD_HHMM>.log
+  ```
+* ETL metrics and cleaned/joined outputs are saved to:
+  ```
+  /Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/etl_output/
+  ```
+  - menu_items_loaded.csv
+  - order_details_loaded.csv
+  - etl_df_cleaned_joined.csv
+  - metrics_<timestamp>.csv
+* Inline tables are displayed in the notebook for verification.
 
-3. Run All Cells
+---
 
-   * The notebook will automatically:
+## Reproducibility Artifacts
 
-     * Configure logging
-     * Fix random seeds for reproducibility
-     * Compute SHA-256 hashes for input CSVs
-     * Load and clean the datasets
-     * Perform ETL transformations
-     * Display initial data and metrics
-     * Save metrics and log files
+The following files are generated or maintained for reproducibility:
+* `requirements.txt`
+* `data_hashes.json`
+* Log files in `logs/`
+* ETL outputs in `etl_output/`
+* This `README.md` and `RUN.md`
 
 ---
 
@@ -84,35 +121,8 @@ This project prepares you for larger datasets and more complex ETL pipelines in 
 import logging
 import os
 from datetime import datetime
-
-# Create logs directory if it doesn't exist
-os.makedirs('logs', exist_ok=True)
-
-# Set up log file name with current date and time
-now = datetime.now()
-log_filename = f"logs/run_{now.strftime('%Y%m%d_%H%M')}.log"
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s | %(levelname)s | %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(log_filename)
-    ]
-)
-
-# Log start of run
-logging.info("Run started.")
-logging.info(f"Cluster/runtime info: AWS Serverless interactive cluster (terminated by inactivity)")
-
-# Paths to GitHub-connected Databricks repo
-logging.info(f"menu file path: /Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/menu_items.csv")
-logging.info(f"orders file path: /Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/order_details.csv")
-logging.info(f"Log file: {log_filename}")
+# ... (see notebook for full code)
 ```
-
----
 
 ### 2️⃣ Reproducibility & Data Hashes
 
@@ -121,98 +131,36 @@ import os, random, numpy as np
 import subprocess
 import hashlib
 import json
-
-# Fix random seeds
-os.environ['PYTHONHASHSEED'] = '0'
-random.seed(0)
-np.random.seed(0)
-logging.info("Random seeds set to 0")
-
-# Capture environment
-!pip freeze > requirements.txt
-logging.info("Saved environment packages to requirements.txt")
-
-# Compute SHA-256 hashes for input CSVs
-def compute_sha256(file_path):
-    sha256_hash = hashlib.sha256()
-    with open(file_path, "rb") as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256_hash.update(byte_block)
-    return sha256_hash.hexdigest()
-
-data_files = [
-    "/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/menu_items.csv",
-    "/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/order_details.csv"
-]
-
-hashes = {}
-for f in data_files:
-    if os.path.exists(f):
-        hashes[f] = compute_sha256(f)
-    else:
-        logging.warning(f"File not found: {f}. Skipping hash computation.")
-
-with open("data_hashes.json", "w") as f:
-    json.dump(hashes, f, indent=2)
-
-logging.info(f"Data hashes saved to data_hashes.json: {hashes}")
+# ... (see notebook for full code)
 ```
-
----
 
 ### 3️⃣ Load CSVs with Pandas
 
 ```python
 import pandas as pd
-
 menu = pd.read_csv('/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/menu_items.csv')
 orders = pd.read_csv('/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/order_details.csv')
-
-print('menu_items shape:', menu.shape)
-print('order_details shape:', orders.shape)
-display(menu.head())
-display(orders.head())
+# ... (see notebook for full code)
 ```
 
----
+### 4️⃣ Clean, Join, and Save Data
 
-## Outputs and Logs
-
-* Logs: `logs/run_<YYYYMMDD_HHMM>.log`
-* Metrics output: `/FileStore/tables/etl_output/metrics_<timestamp>.csv`
-* Inline tables displayed in notebook for verification
-
-
----
-
-
-## Clean basic issues
-
+```python
 orders['order_date'] = pd.to_datetime(orders['order_date'], errors='coerce')
 orders['order_time'] = orders['order_time'].str.strip()
 if 'item_id' in orders.columns:
-    orders['item_id'] = orders['item_id'].astype('Int64')  # Use nullable integer type to avoid IntCastingNaNError
+    orders['item_id'] = orders['item_id'].astype('Int64')
 menu['item_name'] = menu['item_name'].str.strip()
 menu['category'] = menu['category'].str.strip()
-
-# Join on menu_items.menu_item_id = order_details.item_id
 etl_df = orders.merge(menu, left_on='item_id', right_on='menu_item_id', how='left')
-
-# Create tidy table with useful columns
 etl_df = etl_df[['order_id', 'order_date', 'order_time', 'item_name', 'category', 'price']]
-display(etl_df.head())
-
-# Save cleaned and joined outputs
-import os
-output_dir = '/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/etl_output'
-os.makedirs(output_dir, exist_ok=True)
 menu.to_csv(f'{output_dir}/menu_items_loaded.csv', index=False)
 orders.to_csv(f'{output_dir}/order_details_loaded.csv', index=False)
 etl_df.to_csv(f'{output_dir}/etl_df_cleaned_joined.csv', index=False)
-print('Saved menu_items, order_details, and cleaned/joined etl_df to etl_output directory.')
+```
 
 ---
 
 ## Ethical Reflection
 
-Certain types of information should never be logged, such as personal customer details and passwords. For example, logging a customer's address or credit card number can expose sensitive data to unauthorized access, while logging passwords can lead to serious security breaches. Reproducibility supports accountability and fairness by allowing others to verify analyses and confirm that results are consistent. This is especially important when models or decisions affect people, as reproducible workflows help reduce errors and bias, building trust in data driven projects.
+Certain types of information should never be logged, such as personal customer details and passwords. For example, logging a customer's address or credit card number can expose sensitive data to unauthorized access, while logging passwords can lead to serious security breaches. Reproducibility supports accountability and fairness by allowing others to verify analyses and confirm that results are consistent. This is especially important when models or decisions affect people, as reproducible workflows help reduce errors and bias, building trust in data-driven projects.
