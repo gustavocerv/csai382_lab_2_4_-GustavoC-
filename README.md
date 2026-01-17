@@ -181,3 +181,10 @@ display(orders.head())
 * Logs: `logs/run_<YYYYMMDD_HHMM>.log`
 * Metrics output: `/FileStore/tables/etl_output/metrics_<timestamp>.csv`
 * Inline tables displayed in notebook for verification
+
+
+---
+
+## Ethical Reflection
+
+Certain types of information should never be logged, such as personal customer details and passwords. For example, logging a customer's address or credit card number can expose sensitive data to unauthorized access, while logging passwords can lead to serious security breaches. Reproducibility supports accountability and fairness by allowing others to verify analyses and confirm that results are consistent. This is especially important when models or decisions affect people, as reproducible workflows help reduce errors and bias, building trust in data driven projects.
