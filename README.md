@@ -1,58 +1,182 @@
-# csai-382-repos-and-notebooks
-CSAI-382 starting template for the 2.3 assignment GitHub Repository &amp; Notebooks
+# CSE AI 382 Lab 2.4 – ETL Reproducibility Notebook
 
-## Project Description
-This repository serves as a starter template for CSAI-382 students working on data science projects. It includes a standard folder structure and configuration files to help organize your work effectively.
+This repository contains a small ETL project for **CSE AI 382**, focused on reproducible data processing, logging, and metrics computation using **Pandas in Databricks**. The purpose of this repo is to provide a **clean, reproducible workflow** for transforming and analyzing small restaurant datasets.
 
-## Folder Structure
+---
+
+## Repository Structure
+
 ```
-csai-382-repos-and-notebooks/
-├── notebooks/          # Jupyter notebooks for analysis and exploration
-├── sql/               # SQL scripts and queries
-├── etl_pipeline/      # ETL (Extract, Transform, Load) pipeline scripts
-├── data_samples/      # Sample datasets for testing and development
-├── .gitignore         # Git ignore rules for Python, Jupyter, VSCode, and OS files
-└── README.md          # This file
+├── notebooks/        # Databricks or Jupyter notebooks for ETL tasks
+├── sql/              # Independent SQL transformation files (optional)
+├── etl_pipeline/     # Python scripts or workflow automation files
+├── data_samples/     # Example datasets for testing
+└── README.md         # Project overview and instructions
 ```
 
-## How to Use
-1. Clone this repository to your local machine
-2. Place your Jupyter notebooks in the `notebooks/` folder
-3. Store SQL scripts in the `sql/` folder
-4. Add ETL pipeline code to the `etl_pipeline/` folder
-5. Put sample data files in the `data_samples/` folder
-6. Update this README with project-specific information
+**Folder Purpose:**
 
-## Notes
-- The `.gitignore` file is configured to exclude common Python, Jupyter, VSCode, and OS-specific files
-- Each folder contains a `.keep` file to ensure the folder structure is preserved in Git
-- Customize this template to fit your specific project needs
+* **notebooks/** → Contains the ETL notebook `lab_2_4_repro_logging` which:
 
-## Project overview
-This repo is a lightweight starter for the CSAI-382 2.3 assignment, focused on running notebooks both locally and in Databricks. It includes a minimal project structure so you can practice committing code, tracking experiments, and producing reproducible artifacts. Use it as the base for exploring version control, data logging, and collaboration workflows.
+  * Loads and cleans datasets
+  * Performs joins and data transformations
+  * Computes metrics like top items, revenue by category, and busiest hour
+  * Logs runtime info and saves output metrics
+* **sql/** → For SQL queries or transformations (not used in this lab but included for future use)
+* **etl_pipeline/** → Python scripts for automation or reproducible workflows
+* **data_samples/** → Contains small example CSV files:
 
-## How to run
+  * `menu_items.csv`
+  * `order_details.csv`
+* **README.md** → This file, describing the project, folder structure, and how to run the notebook
 
-### Local
-1. Install Python 3.10+ and create a virtual environment.
-2. Install dependencies (for example, `pip install -r requirements.txt` if you add one for your work).
-3. Launch Jupyter or VS Code and open the notebooks in this repo. Ensure any data files referenced in your notebooks are stored in a tracked `data/` subfolder or an external path you note in the notebook.
+---
 
-### Databricks
-1. Import this repository into your Databricks workspace (or use Repos to sync from GitHub).
-2. Attach a cluster with the runtime your assignment specifies (or latest ML runtime).
-3. Run notebooks from the Workspace UI. Persist outputs to DBFS paths (e.g., `/dbfs/FileStore/your-project/...`) and keep any table creations or job configs in version control where possible.
+## Project Purpose
 
-## Artifacts and logging
-- Store raw data, intermediate datasets, and generated figures under a dedicated `artifacts/` directory (or a cloud bucket/DBFS path you reference in notebooks).
-- Record model checkpoints or metrics exports with clear filenames and dates; prefer open formats like CSV/JSON for portability.
-- Keep a short `RUN.md` or notebook cell pointing to the exact artifact locations so others can find and reproduce results.
+The purpose of this repository is to:
 
-## Reproducibility and run steps
-Follow the assignment-provided RUN steps (see the course materials link you add to `RUN.md`) whenever you execute or re-execute experiments. Document package versions, cluster/runtime configs, and parameter choices alongside your commits so teammates can replay the same workflow.
+1. Demonstrate a reproducible ETL workflow in Databricks.
+2. Show proper logging for analysis tracking and debugging.
+3. Ensure reproducibility using random seed fixes and SHA-256 hashes of input files.
+4. Produce metrics for a small restaurant dataset:
 
-## Ethics reflection
-Avoid logging personally identifiable information (e.g., names, emails) and protected attributes (e.g., race, gender) unless you have explicit approval and safeguards. Excluding these fields from logs reduces privacy risks and mitigates biased downstream use. Thorough, reproducible experiment records—covering data versions, code commits, and parameters—enable accountability reviews and fairness audits by making decisions traceable.
+   * Top 5 items by quantity
+   * Revenue by category
+   * Busiest hour of the day
 
-## AI usage guidance
-You may consult AI tools for drafting code or text, but you are responsible for verifying correctness, citing any AI-assisted sections per assignment rules, and ensuring the final work meets course academic integrity policies.
+This project prepares you for larger datasets and more complex ETL pipelines in future labs.
+
+---
+
+## How to Run (Databricks)
+
+1. **Clone the Repository in Databricks**
+
+   * Go to **Repos → Add Repo** and connect your GitHub account.
+   * Clone this repository into your Databricks workspace.
+
+2. **Open the ETL Notebook**
+
+   * Navigate to `notebooks/lab_2_4_repro_logging`.
+   * Attach an interactive cluster.
+
+3. **Run All Cells**
+
+   * The notebook will automatically:
+
+     * Configure logging
+     * Fix random seeds for reproducibility
+     * Compute SHA-256 hashes for input CSVs
+     * Load and clean the datasets
+     * Perform ETL transformations
+     * Display initial data and metrics
+     * Save metrics and log files
+
+---
+
+## Notebook Code Highlights
+
+### 1️⃣ Logging Setup
+
+```python
+import logging
+import os
+from datetime import datetime
+
+# Create logs directory if it doesn't exist
+os.makedirs('logs', exist_ok=True)
+
+# Set up log file name with current date and time
+now = datetime.now()
+log_filename = f"logs/run_{now.strftime('%Y%m%d_%H%M')}.log"
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)s | %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(log_filename)
+    ]
+)
+
+# Log start of run
+logging.info("Run started.")
+logging.info(f"Cluster/runtime info: AWS Serverless interactive cluster (terminated by inactivity)")
+
+# Paths to GitHub-connected Databricks repo
+logging.info(f"menu file path: /Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/menu_items.csv")
+logging.info(f"orders file path: /Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/order_details.csv")
+logging.info(f"Log file: {log_filename}")
+```
+
+---
+
+### 2️⃣ Reproducibility & Data Hashes
+
+```python
+import os, random, numpy as np
+import subprocess
+import hashlib
+import json
+
+# Fix random seeds
+os.environ['PYTHONHASHSEED'] = '0'
+random.seed(0)
+np.random.seed(0)
+logging.info("Random seeds set to 0")
+
+# Capture environment
+!pip freeze > requirements.txt
+logging.info("Saved environment packages to requirements.txt")
+
+# Compute SHA-256 hashes for input CSVs
+def compute_sha256(file_path):
+    sha256_hash = hashlib.sha256()
+    with open(file_path, "rb") as f:
+        for byte_block in iter(lambda: f.read(4096), b""):
+            sha256_hash.update(byte_block)
+    return sha256_hash.hexdigest()
+
+data_files = [
+    "/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/menu_items.csv",
+    "/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/order_details.csv"
+]
+
+hashes = {}
+for f in data_files:
+    if os.path.exists(f):
+        hashes[f] = compute_sha256(f)
+    else:
+        logging.warning(f"File not found: {f}. Skipping hash computation.")
+
+with open("data_hashes.json", "w") as f:
+    json.dump(hashes, f, indent=2)
+
+logging.info(f"Data hashes saved to data_hashes.json: {hashes}")
+```
+
+---
+
+### 3️⃣ Load CSVs with Pandas
+
+```python
+import pandas as pd
+
+menu = pd.read_csv('/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/menu_items.csv')
+orders = pd.read_csv('/Workspace/Users/gsc314@ensign.edu/csai382_lab_2_4_-GustavoC-/data_samples/order_details.csv')
+
+print('menu_items shape:', menu.shape)
+print('order_details shape:', orders.shape)
+display(menu.head())
+display(orders.head())
+```
+
+---
+
+## Outputs and Logs
+
+* **Logs:** `logs/run_<YYYYMMDD_HHMM>.log`
+* **Metrics output:** `/FileStore/tables/etl_output/metrics_<timestamp>.csv`
+* Inline tables displayed in notebook for verification
