@@ -1,0 +1,6 @@
+order_id,order_date,order_time,item_name,category,price
+1,2023-01-01,11:38:36 AM,Korean Beef Bowl,Asian,17.95
+2,2023-01-01,11:57:40 AM,Tofu Pad Thai,Asian,14.5
+2,2023-01-01,11:57:40 AM,Spaghetti,Italian,14.5
+2,2023-01-01,11:57:40 AM,Chicken Burrito,Mexican,12.95
+2,2023-01-01,11:57:40 AM,Mushroom Ravioli,Italian,15.5
