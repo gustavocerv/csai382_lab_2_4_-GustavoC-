@@ -1,3 +1,0 @@
-digraph "STEDI Pipeline" {
-	preprocess_0 [label=preprocess]
-}
